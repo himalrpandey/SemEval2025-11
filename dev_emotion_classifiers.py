@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from sklearn.metrics import recall_score, precision_score, f1_score, confusion_matrix, accuracy_score
 
 import torch
 from torch.utils.data import Dataset, DataLoader
@@ -11,9 +10,9 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import os
 
 EMOTIONS = ['Anger', 'Fear', 'Joy', 'Sadness', 'Surprise']
-THRESHOLDS = {'Joy': 0.20, 'Anger': 0.55, 'Sadness': 0.35, 'Surprise': 0.20, 'Fear': 0.25}
+THRESHOLDS = {'Joy': 0.2, 'Anger': 0.5, 'Sadness': 0.2, 'Surprise': 0.2, 'Fear': 0.5}
 BATCH_SIZE = 32
-EPOCHS = 20
+EPOCHS = 30
 NUM_WORKERS = 2  # Number of workers for DataLoader and gpus
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 EARLY_STOPPING_PATIENCE = 5
@@ -145,7 +144,7 @@ def main():
     # Save predictions the format for the comp
     output_csv_file = "pred_eng_a.csv"
     final_predictions.to_csv(output_csv_file, index=False)
-    print(f"\nPredictions saved to '{output_csv_file}'.")
+    print(f"\nPredictions saved to {output_csv_file}")
 
 if __name__ == "__main__":
     main()
