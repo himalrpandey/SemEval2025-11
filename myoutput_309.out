@@ -1,0 +1,123 @@
+
+Anger
+Epoch 1, Training Loss: 0.3936
+Epoch 2, Training Loss: 0.3889
+Epoch 3, Training Loss: 0.4011
+Epoch 4, Training Loss: 0.3755
+Epoch 5, Training Loss: 0.3683
+Epoch 6, Training Loss: 0.3729
+Epoch 7, Training Loss: 0.3704
+Epoch 8, Training Loss: 0.3701
+Epoch 9, Training Loss: 0.3729
+Epoch 10, Training Loss: 0.3708
+Early stopped
+
+Confusion Matrix for Anger:
+True Negatives: 2136, False Positives: 0
+False Negatives: 543, True Positives: 0
+[[2136    0]
+ [ 543    0]]
+Anger
+Accuracy: 0.7973, Recall: 0.0000, Precision: 0.0000, F1: 0.0000
+
+Fear
+Epoch 1, Training Loss: 0.6863
+Epoch 2, Training Loss: 0.6675
+Epoch 3, Training Loss: 0.5411
+Epoch 4, Training Loss: 0.4174
+Epoch 5, Training Loss: 0.3156
+Epoch 6, Training Loss: 0.2190
+Epoch 7, Training Loss: 0.1413
+Epoch 8, Training Loss: 0.1057
+Epoch 9, Training Loss: 0.1007
+Epoch 10, Training Loss: 0.0543
+Epoch 11, Training Loss: 0.0621
+Epoch 12, Training Loss: 0.0537
+Epoch 13, Training Loss: 0.0446
+Epoch 14, Training Loss: 0.0320
+Epoch 15, Training Loss: 0.0472
+
+Confusion Matrix for Fear:
+True Negatives: 1403, False Positives: 948
+False Negatives: 4, True Positives: 324
+[[1403  948]
+ [   4  324]]
+Fear
+Accuracy: 0.6446, Recall: 0.9878, Precision: 0.2547, F1: 0.4050
+
+Joy
+Epoch 1, Training Loss: 0.5768
+Epoch 2, Training Loss: 0.5560
+Epoch 3, Training Loss: 0.5272
+Epoch 4, Training Loss: 0.3969
+Epoch 5, Training Loss: 0.2786
+Epoch 6, Training Loss: 0.2049
+Epoch 7, Training Loss: 0.1259
+Epoch 8, Training Loss: 0.0859
+Epoch 9, Training Loss: 0.0644
+Epoch 10, Training Loss: 0.0367
+Epoch 11, Training Loss: 0.0485
+Epoch 12, Training Loss: 0.0705
+Epoch 13, Training Loss: 0.0489
+Epoch 14, Training Loss: 0.0590
+Epoch 15, Training Loss: 0.0308
+
+Confusion Matrix for Joy:
+True Negatives: 1729, False Positives: 395
+False Negatives: 91, True Positives: 464
+[[1729  395]
+ [  91  464]]
+Joy
+Accuracy: 0.8186, Recall: 0.8360, Precision: 0.5402, F1: 0.6563
+
+Sadness
+Epoch 1, Training Loss: 0.6396
+Epoch 2, Training Loss: 0.6307
+Epoch 3, Training Loss: 0.6293
+Epoch 4, Training Loss: 0.6314
+Epoch 5, Training Loss: 0.6307
+Epoch 6, Training Loss: 0.6290
+Epoch 7, Training Loss: 0.6314
+Epoch 8, Training Loss: 0.6289
+Epoch 9, Training Loss: 0.6275
+Epoch 10, Training Loss: 0.6286
+Epoch 11, Training Loss: 0.6289
+Epoch 12, Training Loss: 0.6290
+Epoch 13, Training Loss: 0.6304
+Epoch 14, Training Loss: 0.6278
+Early stopped
+
+Confusion Matrix for Sadness:
+True Negatives: 2257, False Positives: 1
+False Negatives: 421, True Positives: 0
+[[2257    1]
+ [ 421    0]]
+Sadness
+Accuracy: 0.8425, Recall: 0.0000, Precision: 0.0000, F1: 0.0000
+
+Surprise
+Epoch 1, Training Loss: 0.6048
+Epoch 2, Training Loss: 0.5333
+Epoch 3, Training Loss: 0.4345
+Epoch 4, Training Loss: 0.3116
+Epoch 5, Training Loss: 0.2460
+Epoch 6, Training Loss: 0.1668
+Epoch 7, Training Loss: 0.1316
+Epoch 8, Training Loss: 0.0966
+Epoch 9, Training Loss: 0.1263
+Epoch 10, Training Loss: 0.1298
+Epoch 11, Training Loss: 0.0739
+Epoch 12, Training Loss: 0.0604
+Epoch 13, Training Loss: 0.0405
+Epoch 14, Training Loss: 0.0266
+Epoch 15, Training Loss: 0.0414
+
+Confusion Matrix for Surprise:
+True Negatives: 1442, False Positives: 882
+False Negatives: 30, True Positives: 325
+[[1442  882]
+ [  30  325]]
+Surprise
+Accuracy: 0.6596, Recall: 0.9155, Precision: 0.2693, F1: 0.4161
+
+Predictions saved to pred_rus.csv
