@@ -6,19 +6,21 @@ from torch.utils.data import Dataset, DataLoader
 from torch import nn
 from torch.optim import AdamW
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score, confusion_matrix
 
 EMOTIONS = ['Anger', 'Fear', 'Joy', 'Sadness', 'Surprise']
-THRESHOLDS = {'Joy': 0.2, 'Anger': 0.5, 'Sadness': 0.2, 'Surprise': 0.2, 'Fear': 0.5} #proportions from each one of these, deterministic function that maps
+#Threshold proportional to positive labeling in dataset of 2768 inputs. {Joy: 674, Anger: 333, Sadness: 878, Surprise: 839, Fear: 1611}
+THRESHOLDS = {'Joy': 0.24, 'Anger': 0.12, 'Sadness': 0.32, 'Surprise': 0.30, 'Fear': 0.58}
 BATCH_SIZE = 32
-EPOCHS = 30
-NUM_WORKERS = 1  # Number of workers for DataLoader and gpus
+EPOCHS = 15
+NUM_WORKERS = 3  # Number of workers for DataLoader and gpus
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 EARLY_STOPPING_PATIENCE = 5
 
 torch.set_num_threads(NUM_WORKERS)
 
 train = pd.read_csv('public_data/train/track_a/eng.csv')
-dev = pd.read_csv('public_data/dev/track_c/ptbr_c.csv')
+dev = pd.read_csv('public_data/train/track_a/rus.csv')
 
 class EmotionDataset(Dataset):
     def __init__(self, texts, labels, tokenizer, max_length=256):
@@ -47,9 +49,9 @@ class EmotionDataset(Dataset):
         }
 
 def initialize_model_and_tokenizer():
-    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-multilingual-cased")
+    tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-large")
     model = AutoModelForSequenceClassification.from_pretrained(
-        "bert-base-multilingual-cased", num_labels=1
+        "xlm-roberta-large", num_labels=1
     )
     return tokenizer, model
 
@@ -112,6 +114,26 @@ def get_predictions(data_loader, model, device):
 
     return np.array(predictions)
 
+def print_confusion_matrix(y_true, y_pred, emotion):
+    cm = confusion_matrix(y_true, y_pred)
+    print(f"\nConfusion Matrix for {emotion}:")
+    print(f"True Negatives: {cm[0, 0]}, False Positives: {cm[0, 1]}")
+    print(f"False Negatives: {cm[1, 0]}, True Positives: {cm[1, 1]}")
+    print(cm)
+
+def evaluate_predictions(y_true, y_pred, emotion):
+    accuracy = accuracy_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred, zero_division=0)
+    precision = precision_score(y_true, y_pred, zero_division=0)
+    f1 = f1_score(y_true, y_pred, zero_division=0)
+    
+    print_confusion_matrix(y_true, y_pred, emotion)
+
+    print(f"{emotion}")
+    print(f"Accuracy: {accuracy:.4f}, Recall: {recall:.4f}, Precision: {precision:.4f}, F1: {f1:.4f}")
+
+
+
 def main():
     final_predictions = pd.DataFrame()
     final_predictions["id"] = dev["id"]
@@ -121,6 +143,7 @@ def main():
 
         train_texts, train_labels = train["text"].tolist(), train[emotion].values
         dev_texts = dev["text"].tolist()
+        dev_labels = dev[emotion].values
 
         tokenizer, model = initialize_model_and_tokenizer()
 
@@ -137,9 +160,11 @@ def main():
         threshold = THRESHOLDS[emotion]
         y_pred = (y_probs > threshold).astype(int)
         final_predictions[emotion] = y_pred
+        
+        evaluate_predictions(dev_labels, y_pred, emotion)
 
     # Save predictions the format for the comp
-    output_csv_file = "pred_ptbr_c.csv"
+    output_csv_file = "pred_rus.csv"
     final_predictions.to_csv(output_csv_file, index=False)
     print(f"\nPredictions saved to {output_csv_file}")
 

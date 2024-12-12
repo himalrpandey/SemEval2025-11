@@ -12,7 +12,8 @@ import os
 #class_weights
 
 EMOTIONS = ['Anger', 'Fear', 'Joy', 'Sadness', 'Surprise']
-THRESHOLDS = {'Joy': 0.2, 'Anger': 0.5, 'Sadness': 0.2, 'Surprise': 0.2, 'Fear': 0.5}
+#Threshold proportional to positive labeling in dataset of 2768 inputs. {Joy: 674, Anger: 333, Sadness: 878, Surprise: 839, Fear: 1611}
+THRESHOLDS = {'Joy': 0.24, 'Anger': 0.12, 'Sadness': 0.32, 'Surprise': 0.30, 'Fear': 0.58}
 BATCH_SIZE = 32
 EPOCHS = 30
 NUM_WORKERS = 1  # Number of workers for DataLoader and gpus

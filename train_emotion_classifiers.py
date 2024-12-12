@@ -12,7 +12,6 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import os
 
 EMOTIONS = ['Anger', 'Fear', 'Joy', 'Sadness', 'Surprise']
-#THRESHOLDS = [0.35, 0.45, 0.4, 0.55, 0.3] doing it dynamically right now
 BATCH_SIZE = 16
 EPOCHS = 20
 NUM_WORKERS = 1  # Number of workers for DataLoader gpus
@@ -177,11 +176,11 @@ def evaluate_predictions(y_true, y_pred, emotion, output_file):
     print_confusion_matrix(y_true, y_pred, emotion)
 
     with open(output_file, "a") as f:
-        f.write(f"*** {emotion} ***\n")
+        f.write(f"{emotion}\n")
         f.write(f"Accuracy: {accuracy:.4f}\n")
         f.write(f"Recall: {recall:.4f}, Precision: {precision:.4f}, F1: {f1:.4f}\n")
 
-    print(f"*** {emotion} ***")
+    print(f"{emotion}")
     print(f"Accuracy: {accuracy:.4f}, Recall: {recall:.4f}, Precision: {precision:.4f}, F1: {f1:.4f}")
 
 def main():
