@@ -9,11 +9,13 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 import os
 
+#class_weights
+
 EMOTIONS = ['Anger', 'Fear', 'Joy', 'Sadness', 'Surprise']
 THRESHOLDS = {'Joy': 0.2, 'Anger': 0.5, 'Sadness': 0.2, 'Surprise': 0.2, 'Fear': 0.5}
 BATCH_SIZE = 32
 EPOCHS = 30
-NUM_WORKERS = 2  # Number of workers for DataLoader and gpus
+NUM_WORKERS = 1  # Number of workers for DataLoader and gpus
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 EARLY_STOPPING_PATIENCE = 5
 
@@ -91,7 +93,7 @@ def train_model(model, train_loader, device, epochs, patience=EARLY_STOPPING_PAT
         else:
             no_improve_epochs += 1
             if no_improve_epochs >= patience:
-                print("Early stopping triggered.")
+                print("Early stopped")
                 model.load_state_dict(best_model)
                 break
 
@@ -119,7 +121,7 @@ def main():
     final_predictions["id"] = dev["id"]
 
     for emotion in EMOTIONS:
-        print(f"\nProcessing emotion: {emotion}")
+        print(f"\n{emotion}")
 
         train_texts, train_labels = train["text"].tolist(), train[emotion].values
         dev_texts = dev["text"].tolist()
@@ -132,7 +134,6 @@ def main():
         train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
         dev_loader = DataLoader(dev_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
 
-        print(f"Training model for {emotion}...")
         model = train_model(model, train_loader, DEVICE, EPOCHS)
 
         y_probs = get_predictions(dev_loader, model, DEVICE)
