@@ -13,7 +13,7 @@ EMOTIONS = ['Anger', 'Fear', 'Joy', 'Sadness', 'Surprise']
 THRESHOLDS = {'Joy': 0.24, 'Anger': 0.12, 'Sadness': 0.32, 'Surprise': 0.30, 'Fear': 0.58}
 BATCH_SIZE = 32
 EPOCHS = 15
-NUM_WORKERS = 3  # Number of workers for DataLoader and gpus
+NUM_WORKERS = 1  # Number of workers for DataLoader and gpus
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 EARLY_STOPPING_PATIENCE = 5
 
@@ -23,6 +23,9 @@ train = pd.read_csv('public_data/train/track_a/eng.csv')
 dev = pd.read_csv('public_data/train/track_a/rus.csv')
 
 class EmotionDataset(Dataset):
+    """
+    This class is used to create a PyTorch dataset from the texts and labels.
+    """
     def __init__(self, texts, labels, tokenizer, max_length=256):
         self.texts = texts
         self.labels = labels
@@ -32,6 +35,9 @@ class EmotionDataset(Dataset):
     def __len__(self):
         return len(self.texts)
 
+    """
+    This function returns the input_ids, attention_mask, and labels for the given index.
+    """
     def __getitem__(self, idx):
         text = self.texts[idx]
         label = self.labels[idx]
@@ -47,7 +53,10 @@ class EmotionDataset(Dataset):
             "attention_mask": encoding["attention_mask"].squeeze(0),
             "labels": torch.tensor(label, dtype=torch.float),
         }
-
+        
+"""
+This function initializes the model and tokenizer. 
+"""
 def initialize_model_and_tokenizer():
     tokenizer = AutoTokenizer.from_pretrained("distilbert-base-multilingual-cased")
     model = AutoModelForSequenceClassification.from_pretrained(
@@ -55,6 +64,17 @@ def initialize_model_and_tokenizer():
     )
     return tokenizer, model
 
+"""
+This function trains the model.
+args:
+    model: The model to train
+    train_loader: DataLoader for training data
+    device: Device to use for training
+    epochs: Number of epochs to train
+    patience: Number of epochs to wait for improvement before early stopping
+returns:
+    model: Trained model
+"""
 def train_model(model, train_loader, device, epochs, patience=EARLY_STOPPING_PATIENCE):
     optimizer = AdamW(model.parameters(), lr=1e-5)
     criterion = nn.BCEWithLogitsLoss()
@@ -97,6 +117,15 @@ def train_model(model, train_loader, device, epochs, patience=EARLY_STOPPING_PAT
 
     return model
 
+"""
+This function gets predictions from the model.
+args:
+    data_loader: DataLoader for the data
+    model: Model to get predictions from
+    device: Device to use for predictions
+returns:
+    predictions: Predictions from the model
+"""
 def get_predictions(data_loader, model, device):
     model.eval()
     predictions = []
@@ -114,6 +143,9 @@ def get_predictions(data_loader, model, device):
 
     return np.array(predictions)
 
+"""
+This function prints the confusion matrix for the given emotion.
+"""
 def print_confusion_matrix(y_true, y_pred, emotion):
     cm = confusion_matrix(y_true, y_pred)
     print(f"\nConfusion Matrix for {emotion}:")
@@ -121,6 +153,10 @@ def print_confusion_matrix(y_true, y_pred, emotion):
     print(f"False Negatives: {cm[1, 0]}, True Positives: {cm[1, 1]}")
     print(cm)
 
+"""
+This function evaluates the predictions for the given emotion.
+It compares the true labels with the predicted labels and prints the accuracy, recall, precision, and F1 score.
+"""
 def evaluate_predictions(y_true, y_pred, emotion):
     accuracy = accuracy_score(y_true, y_pred)
     recall = recall_score(y_true, y_pred, zero_division=0)
@@ -164,6 +200,7 @@ def main():
         evaluate_predictions(dev_labels, y_pred, emotion)
 
     # Save predictions the format for the comp
+    #currently checking predictions for russian train dataset
     output_csv_file = "pred_rus.csv"
     final_predictions.to_csv(output_csv_file, index=False)
     print(f"\nPredictions saved to {output_csv_file}")

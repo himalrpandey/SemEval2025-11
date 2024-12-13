@@ -11,6 +11,15 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 import os
 
+
+"""
+This file splits the English track A training data into 80/20 training and validation sets, trains a DistilBERT model for each emotion,
+and evaluates the model on the validation set. The best threshold for each emotion is optimized based on the F1 score.
+The predictions are saved to a CSV file along with the evaluation metrics.
+
+It was used to validate the model before testing the dev_emotion_classifiers.py and MultiLing_train_emotion_classifiers.py scripts.
+"""
+
 EMOTIONS = ['Anger', 'Fear', 'Joy', 'Sadness', 'Surprise']
 BATCH_SIZE = 16
 EPOCHS = 20
