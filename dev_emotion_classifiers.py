@@ -11,9 +11,10 @@ import os
 
 #class_weights
 
-EMOTIONS = ['Anger', 'Fear', 'Joy', 'Sadness', 'Surprise']
-#Threshold proportional to positive labeling in dataset of 2768 inputs. {Joy: 674, Anger: 333, Sadness: 878, Surprise: 839, Fear: 1611}
-THRESHOLDS = {'Joy': 0.24, 'Anger': 0.12, 'Sadness': 0.32, 'Surprise': 0.30, 'Fear': 0.58}
+EMOTIONS = ['Anger', 'Disgust', 'Fear', 'Joy', 'Sadness', 'Surprise']
+#Threshold proportional to positive labeling in dataset
+#THRESHOLDS_ENG = {'Joy': 0.24, 'Anger': 0.12, 'Sadness': 0.32, 'Surprise': 0.30, 'Fear': 0.58}
+THRESHOLDS_RUS = {'Disgust': 0.1, 'Joy': 0.21, 'Anger': 0.2, 'Sadness': 0.32, 'Surprise': 0.13, 'Fear': 0.16}
 BATCH_SIZE = 32
 EPOCHS = 30
 NUM_WORKERS = 1  # Number of workers for DataLoader and gpus
@@ -22,8 +23,11 @@ EARLY_STOPPING_PATIENCE = 5
 
 torch.set_num_threads(NUM_WORKERS)
 
-train = pd.read_csv('public_data/train/track_a/eng.csv')
-dev = pd.read_csv('public_data/dev/track_a/eng_a.csv')
+#train_eng = pd.read_csv('public_data/train/track_a/eng.csv')
+#dev_eng = pd.read_csv('public_data/dev/track_a/eng_a.csv')
+
+train_rus = pd.read_csv('public_data/train/track_a/rus.csv')
+dev_rus = pd.read_csv('public_data/dev/track_a/rus_a.csv')
 
 class EmotionDataset(Dataset):
     def __init__(self, texts, labels, tokenizer, max_length=256):
@@ -52,9 +56,9 @@ class EmotionDataset(Dataset):
         }
 
 def initialize_model_and_tokenizer():
-    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-multilingual-cased")
     model = AutoModelForSequenceClassification.from_pretrained(
-        "distilbert-base-cased", num_labels=1
+        "distilbert-base-multilingual-cased", num_labels=1
     )
     return tokenizer, model
 
@@ -119,13 +123,13 @@ def get_predictions(data_loader, model, device):
 
 def main():
     final_predictions = pd.DataFrame()
-    final_predictions["id"] = dev["id"]
+    final_predictions["id"] = dev_rus["id"]
 
     for emotion in EMOTIONS:
         print(f"\n{emotion}")
 
-        train_texts, train_labels = train["text"].tolist(), train[emotion].values
-        dev_texts = dev["text"].tolist()
+        train_texts, train_labels = train_rus["text"].tolist(), train_rus[emotion].values
+        dev_texts = dev_rus["text"].tolist()
 
         tokenizer, model = initialize_model_and_tokenizer()
 
@@ -139,12 +143,13 @@ def main():
 
         y_probs = get_predictions(dev_loader, model, DEVICE)
 
-        threshold = THRESHOLDS[emotion]
+        threshold = THRESHOLDS_RUS[emotion]
         y_pred = (y_probs > threshold).astype(int)
         final_predictions[emotion] = y_pred
 
     # Save predictions the format for the comp
-    output_csv_file = "pred_eng_a.csv"
+    #output_csv_file = "pred_eng_a.csv"
+    output_csv_file = "pred_rus_a.csv"
     final_predictions.to_csv(output_csv_file, index=False)
     print(f"\nPredictions saved to {output_csv_file}")
 

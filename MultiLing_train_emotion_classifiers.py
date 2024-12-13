@@ -49,9 +49,9 @@ class EmotionDataset(Dataset):
         }
 
 def initialize_model_and_tokenizer():
-    tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-large")
+    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-multilingual-cased")
     model = AutoModelForSequenceClassification.from_pretrained(
-        "xlm-roberta-large", num_labels=1
+        "distilbert-base-multilingual-cased", num_labels=1
     )
     return tokenizer, model
 
